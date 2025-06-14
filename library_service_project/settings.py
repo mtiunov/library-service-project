@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "books",
+    "users",
 ]
 
 MIDDLEWARE = [
@@ -69,6 +70,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "library_service_project.wsgi.application"
+
+AUTH_USER_MODEL = "users.User"
 
 
 # Database
