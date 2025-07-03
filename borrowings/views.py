@@ -3,6 +3,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from django_filters.rest_framework import DjangoFilterBackend
+from borrowings.filters import BorrowingFilter
 
 from borrowings.models import Borrowing
 from borrowings.serializers import (
@@ -16,6 +18,8 @@ from borrowings.serializers import (
 class BorrowingListView(generics.ListCreateAPIView):
     serializer_class = BorrowingListSerializer
     permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
+    filter_class = BorrowingFilter
 
     def get_serializer_class(self):
         if self.request.method == "POST":
