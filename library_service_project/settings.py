@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "books",
     "users",
     "borrowings",
+    "django_celery_beat",
 ]
 
 MIDDLEWARE = [
