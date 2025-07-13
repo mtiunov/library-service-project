@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "books",
     "users",
     "borrowings",
+    "django_celery_beat",
 ]
 
 MIDDLEWARE = [
@@ -149,3 +150,9 @@ SIMPLE_JWT = {
    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
    "ROTATE_REFRESH_TOKENS": True
 }
+
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_RESULT_BACKEND = "redis://localhost:6379"
+CELERY_TIMEZONE = "Europe/Kyiv"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
