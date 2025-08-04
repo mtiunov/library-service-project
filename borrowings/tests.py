@@ -133,8 +133,9 @@ class AuthenticatedBorrowingApiTests(TestCase):
         borrowing = Borrowing.objects.get(id=1)
 
         self.assertEqual(
-            str(borrowing), f"{self.user.first_name} {self.user.last_name} "
-                            f"borrows {self.book1.title} till {borrowing.expected_return_date}"
+            str(borrowing),
+            f"{self.user.first_name} {self.user.last_name} "
+            f"borrows {self.book1.title} till {borrowing.expected_return_date}"
         )
 
     def test_list_borrowings_signined_user(self) -> None:
@@ -228,7 +229,9 @@ class AuthenticatedBorrowingApiTests(TestCase):
         self.assertIn(self.user.email, kwargs["text"])
 
     @patch("telegram.Bot.send_message", new_callable=AsyncMock)
-    def test_check_book_inventory_after_create_borrowing(self, mock_send_message) -> None:
+    def test_check_book_inventory_after_create_borrowing(
+            self, mock_send_message
+    ) -> None:
         payload = {
             "expected_return_date": "2025-09-30",
             "book": self.book1.id,
@@ -310,7 +313,8 @@ class AuthenticatedBorrowingApiTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("actual_return_date", response.data)
         self.assertTrue(
-            any("Actual return date cannot be earlier than borrow date." in str(error) for error in
+            any("Actual return date cannot be earlier than borrow date."
+                in str(error) for error in
                 response.data["actual_return_date"])
         )
 
