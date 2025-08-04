@@ -19,7 +19,7 @@ class BorrowingListView(generics.ListCreateAPIView):
     serializer_class = BorrowingListSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend]
-    filter_class = BorrowingFilter
+    filterset_class = BorrowingFilter
 
     def get_serializer_class(self):
         if self.request.method == "POST":

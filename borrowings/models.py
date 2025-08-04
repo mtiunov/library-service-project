@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.db import models
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -6,7 +8,7 @@ from books.models import Book
 
 class Borrowing(models.Model):
     borrow_date = models.DateField(auto_now_add=True)
-    expected_return_date = models.DateField()
+    expected_return_date = models.DateField(null=True, blank=True)
     actual_return_date = models.DateField(null=True, blank=True)
     book = models.ForeignKey(Book, on_delete=models.PROTECT, related_name="borrowings")
     user = models.ForeignKey(
@@ -23,7 +25,7 @@ class Borrowing(models.Model):
                f"{self.book.title} till {self.expected_return_date}"
 
     def clean(self):
-        if self.expected_return_date < self.borrow_date:
+        if self.expected_return_date and self.expected_return_date < self.borrow_date:
             raise ValidationError(
                 {"expected_return_date": "Expected return date cannot "
                                          "be earlier than borrow date."}
@@ -35,5 +37,7 @@ class Borrowing(models.Model):
             )
 
     def save(self, *args, **kwargs):
+        if not self.borrow_date:
+            self.borrow_date = date.today()
         self.full_clean()
         super().save(*args, **kwargs)

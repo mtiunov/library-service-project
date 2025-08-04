@@ -1,5 +1,9 @@
+from datetime import date
+
 from asgiref.sync import async_to_sync
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError as DRFValidationError
+from django.core.exceptions import ValidationError as DjangoValidationError
 from borrowings.models import Borrowing
 from books.serializers import BookSerializer
 from borrowings.telegram import send_telegram_message
@@ -38,6 +42,7 @@ class CreateBorrowingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Borrowing
         fields = (
+            "id",
             "borrow_date",
             "expected_return_date",
             "book",
@@ -52,7 +57,16 @@ class CreateBorrowingSerializer(serializers.ModelSerializer):
         book.save()
 
         user = self.context["request"].user
-        borrowing = Borrowing.objects.create(user=user, **validated_data)
+        borrowing = Borrowing(user=user, **validated_data)
+
+        borrowing.borrow_date = date.today()
+
+        try:
+            borrowing.clean()
+        except DjangoValidationError as e:
+            raise DRFValidationError(e.message_dict)
+
+        borrowing.save()
 
         message = (
             f"<b>New borrowings</b>\n"
@@ -71,3 +85,11 @@ class BorrowingReturnSerializer(serializers.ModelSerializer):
     class Meta:
         model = Borrowing
         fields = ("actual_return_date",)
+
+    def validate_actual_return_date(self, value):
+        borrow_date = self.instance.borrow_date or date.today()
+        if value < borrow_date:
+            raise serializers.ValidationError(
+                "Actual return date cannot be earlier than borrow date."
+            )
+        return value
