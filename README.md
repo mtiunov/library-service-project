@@ -11,6 +11,13 @@ A library service project where you can borrow books and send notifications to t
 - python manage.py migrate 
 - python manage.py runserver
 
+# Run with Docker
+
+Please install Docker
+
+- docker-compose build
+- docker-compose up
+
 # Features
 
 - JWT Authentication
